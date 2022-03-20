@@ -1,0 +1,4 @@
+1. O(n) - if array has multiple values which needs to moved by one position each time.
+2. O(1)
+3. O(n) - same idea for no.1
+4. O(1)
