@@ -1,42 +1,59 @@
 #include <iostream>
 #include "List.h"
 #include <string.h>
+#include <vector>
 using namespace std;
 
+template <class T>
 class Contacts{
 	public:
 		int count,choices;
+		int size = 5;
 		Contacts(){
 			count = 0;
 		};
 		
-		ContactList contacts[500];
+		//dynamic storage using vector on struct class
+		vector<ContactList> contacts{size};
+		
 		void addContact(){
+			if(count >= (size-2)){
+				//dynamic resizing
+				contacts.resize(count+5);
+			}
 			cout << "\ncontact no." << count+1 << endl;
 			cout << "Enter person's name: ";
 			cin >> contacts[count].name;
 			
 			cout << "Enter person's age: ";
 			cin >> contacts[count].age;
-			
+		
 			cout << "Enter person's phone number: ";
 			cin >> contacts[count].phone;
+		
+			for(int i = 0; i < count; i++){
+				if(contacts[count].phone == contacts[i].phone){
+					cout << "Contact already exists" << endl;
+					return;
+				};
+			}
 			
 			cout << "Enter person's birthday (1st of January): ";
 			cin >> contacts[count].birthday;
 			count++;
+			
 			};
+		
 		
 		void deleteContact(){
 			int found = 0;
-			string person,name;
-			int number;
+			int number, person;
 			
-			cout << "Enter the name of the person you would like to delete: ";
+			cout << "Enter the number of the person you would like to delete: ";
 			cin >> person;
 			
 			for(int i = 0; i < count; i++){
-				if(person == contacts[i].name){
+				if(person == contacts[i].phone){
 					found = i;
 				}
 			};
@@ -46,20 +63,20 @@ class Contacts{
 					};
 				};
 				
-			cout << "done" << endl;
+			cout << "\nContact Deleted" << endl;
 			count--;
 		}
 		
 		void searchContact(){
-			string search;
+			int search;
 			bool found = true;
-			cout << "Enter search name: ";
+			cout << "Enter search number: ";
 			cin >> search;
 			
-			for(int i = 0; i < count; i++){
+			for(int i = 0; i < count + 1; i++){
 				found = false;
-				if(search == contacts[i].name){
-					cout << "\n###Found";
+				if(search == contacts[i].phone){
+					cout << "\n!!!Found!!!";
 					displayContact(i);
 					found = true;
 					break;
@@ -72,11 +89,14 @@ class Contacts{
 		
 	private:
 		void displayContact(int i){
-			cout << endl << "Contact #" << i + 1 << ":" << endl;
+			cout << endl << "Contact No." << i + 1 << endl;
 			cout << "Name: " << contacts[i].name << endl;
 			cout << "Age: " << contacts[i].age << endl;
 			cout << "Phone: " << contacts[i].phone << endl;
 			cout << "Birthday: " << contacts[i].birthday << endl;
 		}
+
 };
+
+
 
