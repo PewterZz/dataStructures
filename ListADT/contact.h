@@ -65,6 +65,11 @@ class Contacts{
 				
 			cout << "\nContact Deleted" << endl;
 			count--;
+			
+			//dynamic downsizing
+			if((size-2) > count){
+				contacts.resize(count+1);
+			}
 		}
 		
 		void searchContact(){
@@ -97,6 +102,4 @@ class Contacts{
 		}
 
 };
-
-
 
