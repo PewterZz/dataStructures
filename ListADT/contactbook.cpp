@@ -6,7 +6,7 @@ using namespace std;
 
 
 int main(){
-	Contacts * <int>MyContacts;
+	Contacts <int>MyContacts;
 	string choice;
 	int count;
 	bool end = false;
