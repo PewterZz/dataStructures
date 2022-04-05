@@ -1,0 +1,2 @@
+Recusive = O(n)
+iterative = O(n)
