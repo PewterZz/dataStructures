@@ -1,12 +1,10 @@
 #include <iostream>
-#include <array>
 
 using std::string;
 using std::cout;
 using std::endl;
 using std::cin;
 using std::getline;
-using std::array;
 
 class ContactStock
 {
@@ -16,7 +14,8 @@ class ContactStock
         string getbrand();
         string getmodel();
         int getstock();
-        void setstock(int new_amount);
+        int setstock(int new_amount);
+        
 
     private:
         string _brand;
@@ -44,11 +43,11 @@ string ContactStock::getmodel()
 }
 
 int ContactStock::getstock()
-{
-    return this->_stock;
+{	
+    return _stock;
 }
 
-void ContactStock::setstock(int new_amount){
+int ContactStock::setstock(int new_amount){
 	this->_stock = new_amount;
 }
 
@@ -58,10 +57,10 @@ class ContactList
     public:
         ContactList(int size = 100);
         int length();
-        int maxSize() const;
         T position(int index);
         void add(T &object);
-        void sell(int stock, int index);
+        void replace(int location, T &object);
+        void sell(int stock, int index, string brand, string model);
         void remove(int index);
 
     private:
@@ -92,6 +91,12 @@ template <class T>
 int ContactList<T>::length()
 {
     return this->_length;
+}
+
+template <typename T>
+void ContactList<T>::replace(int location, T &object)
+{
+    this->_list[location] = object;   
 }
 
 template <class T>
@@ -134,7 +139,7 @@ void ContactList<T>::remove(int index)
 
 
 template <class T>
-void ContactList<T>::sell(int stock, int index){
+void ContactList<T>::sell(int stock, int index, string brand, string model){
 	int amount, integer;
 	while(true){
 	cout << "How much laptops are going to be sold? (" << stock << ") left: ";
@@ -149,10 +154,11 @@ void ContactList<T>::sell(int stock, int index){
 		}
 		else{
 			integer = stock - amount;
-			this->position(index).setstock(integer);
+			this->replace(index, *(new ContactStock(brand, model, integer)));
 			break;
 		}
 	}
 }
 	
 }
+
