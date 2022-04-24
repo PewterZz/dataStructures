@@ -34,7 +34,7 @@ int main(){
                 while(true){
                 	cout << "Enter stock(1-100): ";
                 	cin >> stock;
-                	if(0 > stock || stock < 100){
+                	if(0 > stock || stock <= 100){
                 		break;
             		}
             }
@@ -57,8 +57,19 @@ int main(){
 				        cout << "Are you sure this is the one (y/n)?: ";
 						cin  >> answer;
 						if(answer == "y"){
-							Contacts->sell(Contacts->position(i).getstock(), i);
-			    	}
+							string temp = Contacts->position(i).getmodel();
+							Contacts->sell(Contacts->position(i).getstock(), i, Contacts->position(i).getbrand(), Contacts->position(i).getmodel());
+							if(temp == Contacts->position(i).getmodel()){
+								cout << "Remaining stock: " << Contacts->position(i).getstock() << endl;
+							}
+							else{
+								cout << "No more remaining in stock" << endl;
+							}
+			    		}
+			    		else{
+			    			break;
+						}
+					}
 			    }
 				cout << "Enter y to continue... ";
 				cin >> enter;
@@ -68,7 +79,6 @@ int main(){
 				else{
 					break;
 				}
-			}
 			break;
 			}
 				break;
