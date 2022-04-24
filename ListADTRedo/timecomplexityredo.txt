@@ -1,0 +1,4 @@
+1. AddLaptop() = time complexity of adding a laptop to the contact list is O(1) because it immediately adds to the end of the list without searching.
+2. DisplayLaptopStock() = time complexity of this is O(n) as it needs to loop through all of the elements of the list structure.
+3. SellLaptop() = timen complexity of the sell function is O(n) although there are multiple other while loops to make the user experience better so in actuality time complexity  
+of my sell function is about O(n^3).
