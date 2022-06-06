@@ -1,2 +1,4 @@
 Array struct is faster for searching only when the length to search is small, hash table is fast for searching no matter the sample size with minimal collisions.  
+Array struct still has to search through an entire list of structures to find the required data while hsahing can acquire us the address simply through the  
+hash function.
 Time complexity of a hash table lookup is O(1) on an average case , while for the array of struct it has a time complexity of O(n).
