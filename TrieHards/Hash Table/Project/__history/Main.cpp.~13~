@@ -1,0 +1,355 @@
+﻿//---------------------------------------------------------------------------
+
+#include <fmx.h>
+#include <iostream>
+#include <locale>
+#include <string>
+#include <iomanip>
+#include <sstream>
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <sstream>
+#include <stdio.h>
+#include <string.h>
+#include <fstream>
+#include <cstring>
+#include <chrono>
+#pragma hdrstop
+
+#include "Main.h"
+#include "TrieHardsPCH1.h"
+#include "Insert.h"
+#include "Update.h"
+#include "Delete.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.fmx"
+TDictionary *Dictionary;
+//---------------------------------------------------------------------------
+
+using std::cout;
+using std::cin;
+using std::getline;
+using std::string;
+using std::endl;
+using namespace std::chrono;
+
+const int T_S = 56397;
+string alpha[700], CL1[700], CD1[700];
+int index;
+int size = 50;
+
+string& rtrim(string &str, string const &whitespace = " \r\n\t\v\f\"")
+{
+	str.erase(str.find_last_not_of(whitespace) + 1);
+	return str;
+}
+
+string& ltrim(string &str, string const &whitespace = " \r\n\t\v\f\"")
+{
+	str.erase(0, str.find_first_not_of(whitespace));
+	return str;
+}
+
+string ToNarrow( const wchar_t *s, char dfault = '?',
+					  const std::locale& loc = std::locale() )
+{
+  std::ostringstream stm;
+
+  while( *s != L'\0' ) {
+	stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
+  }
+  return stm.str();
+}
+
+template <class T>
+string split(string str, T del){
+	  string temp = "";
+
+	  for(int i=0; i<(int)str.size(); i++){
+		 if(str[i] != del){
+			temp += str[i];
+		}
+		  else{
+			return temp;
+			  temp = "";
+		}
+	}
+
+	  return temp;
+}
+
+template <class T>
+int hashfunc(T key){
+	int hash = 0;
+	for(int i=0;i < key.size(); i++){
+		hash += static_cast<int>(key[i]);
+	}
+	hash = hash % T_S;
+	return hash;
+}
+
+
+class HashTableEntry {
+   public:
+	  string word;
+	  string type;
+	  string definition;
+
+	  HashTableEntry(string k, string type, string v) {
+		 this->word = k;
+		 this->type = type;
+		 this->definition = v;
+      }
+};
+
+
+class HashMapTable {
+   private:
+	  HashTableEntry **t;
+   public:
+      HashMapTable() {
+		 t = new HashTableEntry *[T_S];
+		 for (int i = 0; i < T_S; i++) t[i] = NULL;
+	  }
+	  void Insert(string k, string j, string v) {
+		 int h = hashfunc(k);
+		 while (t[h] != NULL && t[h]->definition != v) {
+			h = (h + 1) % T_S;
+		 }
+		 if (t[h] != NULL)
+			delete t[h];
+		 t[h] = new HashTableEntry(k, j, v);
+	  }
+
+	  string SearchKey(string k) {
+		 int h = hashfunc(k);
+		 string temp;
+		 while (t[h] != NULL && t[h]->word != k) {
+			h = (h + 1) % T_S;
+		 }
+		 if (t[h] != NULL){
+			Dictionary->ListBox1->Items->Add((t[h]->word + ", " + t[h]->type + " : " + t[h]->definition).c_str());
+			return "ues";
+		 }
+
+		 return "nvm";
+	  }
+
+	  string update(string k, string def) {
+		 int h = hashfunc(k);
+		 string temp;
+		 while (t[h] != NULL && t[h]->word != k) {
+			h = (h + 1) % T_S;
+		 }
+		 if(def == "lol"){
+		 if (t[h] != NULL){
+			return t[h]->definition;
+		 }
+		 }
+		 else{
+			 t[h]->definition = def;
+		 }
+
+		 return "nvm";
+	  }
+
+	  void ShowAll(){
+		int i = 0;
+		Dictionary->ListBox1->Items->Clear();
+		while(i < size){
+				Dictionary->ListBox1->Items->Add((alpha[i] + ", " + CL1[i] + " : " + CD1[i]).c_str());
+				i += 1;
+			}
+
+	  }
+
+	  void deleteElement(string k){
+		int h = hashfunc(k);
+		while (t[h] != NULL && t[h]->word != k) {
+			h = (h + 1) % T_S;
+		 }
+		if (t[h] != NULL){
+			delete t[h];
+		}
+		t[h] = NULL;
+	  }
+
+};
+
+HashMapTable hash;
+
+ifstream coeff("C:\\Users\\ACER\\Downloads\\dictionary - Sheet1.csv");
+
+__fastcall TDictionary::TDictionary(TComponent* Owner)
+	: TForm(Owner)
+{
+	int i = 0;
+	string alpha1,CD,CL,CY,temp;
+
+
+	if(coeff.is_open()){
+		while(i < size){
+			getline(coeff, alpha1, ',');
+			alpha[i] = rtrim(ltrim(alpha1));
+			getline(coeff, CL, ',');
+			CL1[i] = rtrim(ltrim(CL));
+			getline(coeff, CD, '\n');
+			CD1[i] = rtrim(ltrim(CD));
+			hash.Insert(alpha1,CL, CD);
+			Dictionary->ListBox1->Items->Add((alpha1 + ", " + CL + " : " + CD).c_str());
+
+
+			i = i+1;
+
+		}
+		coeff.close();
+			auto start = steady_clock::now();
+			auto end = steady_clock::now();
+			double elapsed_time = double(duration_cast<nanoseconds> (end-start).count());
+			cout << "Running time: " << elapsed_time;
+
+
+	}
+
+	else{
+		Dictionary->ListBox1->Items->Add("Nop");
+	};
+
+}
+//---------------------------------------------------------------------------
+
+
+
+
+
+
+void __fastcall TDictionary::SearchClick(TObject *Sender)
+{
+	String taskText= Edit1->Text;
+	AnsiString text = taskText;
+	string res;
+	if(!taskText.IsEmpty()){
+		ListBox1->Items->Clear();
+		res = hash.SearchKey(text.c_str());
+		if(res == "nvm"){
+			ShowMessage("Not Found \t\t\t");
+		}
+	}
+	else{
+		hash.ShowAll();
+		}
+
+	Edit1->Text = "";
+	}
+
+void __fastcall TForm2::InsertionClick(TObject *Sender)
+{
+	String wordText = Edit2->Text;
+	string word = ToNarrow(wordText.c_str());
+	alpha[size] = word;
+	String typeText = Edit1->Text;
+	string type = ToNarrow(typeText.c_str());
+	CL1[size] = type;
+	String defText = Edit3->Text;
+	string def = ToNarrow(defText.c_str());
+	CD1[size] = def;
+	size += 1;
+	hash.Insert(word,type, def);
+	Dictionary->ListBox1->Items->Add((wordText + ", " + typeText + " : " + defText).c_str());
+	Close();
+}
+
+void __fastcall TForm3::UpdateShowClick(TObject *Sender)
+{
+	String wordText = Edit2->Text;
+	string word = ToNarrow(wordText.c_str());
+	string res = hash.update(word, "lol");
+	if(res == "nvm"){
+		ShowMessage("Not Found \t\t\t");
+	}else{
+		Edit1->Text = res.c_str();
+	}
+
+
+}
+
+void __fastcall TForm3::UpdateYesClick(TObject *Sender){
+	String wordText = Edit2->Text;
+	string word = ToNarrow(wordText.c_str());
+	String defText = Edit3->Text;
+	string newdef = ToNarrow(defText.c_str());
+	string res = hash.update(word, newdef);
+	int i = 0;
+	while(i < size){
+		if(word == alpha[i]){
+			CD1[i] = newdef;
+			Dictionary->ListBox1->Items->Clear();
+			hash.ShowAll();
+		}
+		i += 1;
+	}
+	Close();
+}
+
+//---------------------------------------------------------------------------
+
+void __fastcall TDictionary::InsertClick(TObject *Sender)
+{
+	TForm2 *Form2;
+	Form2 = new TForm2(this);
+	Form2->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+
+
+void __fastcall TDictionary::UpdateClick(TObject *Sender)
+{
+	TForm3 *Form3;
+	Form3 = new TForm3(this);
+	Form3->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TDictionary::ListBox1ItemClick(TCustomListBox * const Sender, TListBoxItem * const Item)
+{
+	TForm1 *Form1;
+	Form1 = new TForm1(this);
+	index = Item->Index;
+	Form1->ShowModal();
+}
+
+void __fastcall TForm1::YesClick(TObject *Sender)
+{
+	int i = 0;
+	String one = Dictionary->ListBox1->Selected->Text;
+	string j = split(ToNarrow(one.c_str()), ',');
+	while(i < size){
+		if(alpha[i] == j){
+			index = i;
+		}
+		i += 1;
+	}
+	Dictionary->ListBox1->Items->Delete(index);
+	hash.deleteElement(j);
+	while(index < size){
+		alpha[index] = alpha[index+1];
+		CL1[index] = CL1[index+1];
+		CD1[index] = CD1[index+1];
+		index += 1;
+	}
+	size -= 1;
+	Close();
+}
+//---------------------------------------------------------------------------
+
+
+
+void __fastcall TDictionary::SortClick(TObject *Sender)
+{
+	cout << "Yep";
+}
+//---------------------------------------------------------------------------
+

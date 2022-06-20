@@ -1,0 +1,34 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Delete ?'
+  ClientHeight = 85
+  ClientWidth = 318
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object Yes: TButton
+    Position.X = 56.000000000000000000
+    Position.Y = 48.000000000000000000
+    TabOrder = 1
+    Text = 'Yes'
+    OnClick = YesClick
+  end
+  object Button1: TButton
+    Position.X = 184.000000000000000000
+    Position.Y = 48.000000000000000000
+    TabOrder = 0
+    Text = 'No'
+    OnClick = Button1Click
+  end
+  object Label1: TLabel
+    Position.X = 40.000000000000000000
+    Position.Y = 16.000000000000000000
+    Size.Width = 289.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Are you sure you want to delete this element ?'
+    TabOrder = 2
+  end
+end
