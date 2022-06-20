@@ -1,0 +1,13 @@
+﻿[Label1]
+Coordinates=10,232,53,58
+
+[ListBox1]
+Coordinates=10,10,139,212
+
+[Button1]
+Coordinates=268,10,59,58
+
+[]
+Coordinates=159,10,44,58
+Visible=True
+

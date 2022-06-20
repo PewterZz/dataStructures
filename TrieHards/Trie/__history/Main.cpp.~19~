@@ -1,0 +1,464 @@
+﻿//---------------------------------------------------------------------------
+
+#include <fmx.h>
+#include <iostream>
+#include <locale>
+#include <string>
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <iomanip>
+#include <sstream>
+#include <stdio.h>
+#include <string.h>
+#include <fstream>
+#include <cstring>
+#include <chrono>
+#pragma hdrstop
+
+#include "Main.h"
+#include "TrieHardsPCH1.h"
+#include "Insert.h"
+#include "Update.h"
+#include "Delete.h"
+#define CHAR_SIZE 126
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.fmx"
+TDictionary *Dictionary;
+//---------------------------------------------------------------------------
+using std::getline;
+using std::string;
+using std::endl;
+using namespace std::chrono;
+
+int index;
+int size = 1040;
+
+string& rtrim(string &str, string const &whitespace = " \r\n\t\v\f\"")
+{
+	str.erase(str.find_last_not_of(whitespace) + 1);
+	return str;
+}
+
+string& ltrim(string &str, string const &whitespace = " \r\n\t\v\f\"")
+{
+	str.erase(0, str.find_first_not_of(whitespace));
+	return str;
+}
+
+string ToNarrow( const wchar_t *s, char dfault = '?',
+					  const std::locale& loc = std::locale() )
+{
+  std::ostringstream stm;
+
+  while( *s != L'\0' ) {
+	stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
+  }
+  return stm.str();
+}
+
+template <class T>
+void swapper(T &x, T &y)
+  {
+	  T temp;
+	  temp = x;
+	  x = y;
+      y = temp;
+  }
+
+template <class T>
+void selectionSort(T array[], int size)
+  {
+      int lowestPosition;
+	  T lowestValue;
+
+	  for (int i = 0; i < size - 1; i++)
+	  {
+          lowestValue = array[i];
+		  lowestPosition = i;
+          for (int j = i + 1; j < size; j++)
+		  {
+              if (array[j] < lowestValue)
+              {
+                  lowestPosition = j;
+                  lowestValue = array[j];
+              }
+		  }
+          swapper(array[i], array[lowestPosition]);
+      }
+  }
+
+
+template <class T>
+string split(string str, T del){
+	  string temp = "";
+
+	  for(int i=0; i<(int)str.size(); i++){
+		 if(str[i] != del){
+			temp += str[i];
+		}
+		  else{
+			return temp;
+			  temp = "";
+		}
+	}
+
+	  return temp;
+}
+
+class Trie
+{
+public:
+	bool isLeaf;
+	string word;
+	string def;
+	string type;
+    Trie* character[CHAR_SIZE];
+
+    // Constructor
+    Trie()
+    {
+        this->isLeaf = false;
+
+        for (int i = 0; i < CHAR_SIZE; i++) {
+            this->character[i] = nullptr;
+        }
+    }
+
+	void insert(string w, string t, string d);
+	bool preorder(Trie* node);
+	bool deletion(Trie*&, string);
+	string update(string, string);
+	bool search(string);
+	bool haveChildren(Trie const*);
+};
+
+// Iterative function to insert a key into a Trie
+void Trie::insert(string key, string type, string def)
+{
+    // start from the root node
+    Trie* curr = this;
+    for (int i = 0; i < key.length(); i++)
+    {
+        // create a new node if the path doesn't exist
+        if (curr->character[key[i]] == nullptr) {
+            curr->character[key[i]] = new Trie();
+        }
+
+        // go to the next node
+		curr = curr->character[key[i]];
+    }
+
+    // mark the current node as a leaf
+	curr->isLeaf = true;
+	curr->word = key;
+	curr->type = type;
+	curr->def = def;
+}
+
+// Iterative function to search a key in a Trie. It returns true
+// if the key is found in the Trie; otherwise, it returns false
+bool Trie::search(string key)
+{
+	// return false if Trie is empty
+	if (this == nullptr) {
+		return false;
+	}
+
+	Trie* curr = this;
+	string word;
+	for (int i = 0; i < key.length(); i++)
+	{
+		// go to the next node
+		curr = curr->character[key[i]];
+		// if the string is invalid (reached end of a path in the Trie)
+		if (curr == nullptr) {
+			return false;
+		}
+	}
+
+	// return true if the current node is a leaf and the
+	// end of the string is reached
+	if(curr->isLeaf){
+		Dictionary->ListBox1->Items->Add((key + ", " + curr->type + ": " + curr->def).c_str());
+	}
+	return curr->isLeaf;
+}
+
+
+
+// Returns true if a given node has any children
+bool Trie::haveChildren(Trie const* curr)
+{
+    for (int i = 0; i < CHAR_SIZE; i++)
+    {
+        if (curr->character[i]) {
+            return true;    // child found
+        }
+    }
+
+    return false;
+}
+
+// Recursive function to delete a key in the Trie
+bool Trie::deletion(Trie*& curr, string key)
+{
+    // return if Trie is empty
+    if (curr == nullptr) {
+        return false;
+    }
+
+    // if the end of the key is not reached
+    if (key.length())
+    {
+        // recur for the node corresponding to the next character in the key
+        // and if it returns true, delete the current node (if it is non-leaf)
+
+        if (curr != nullptr &&
+            curr->character[key[0]] != nullptr &&
+            deletion(curr->character[key[0]], key.substr(1)) &&
+            curr->isLeaf == false)
+        {
+            if (!haveChildren(curr))
+            {
+                delete curr;
+                curr = nullptr;
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+
+    // if the end of the key is reached
+    if (key.length() == 0 && curr->isLeaf)
+    {
+        // if the current node is a leaf node and doesn't have any children
+        if (!haveChildren(curr))
+        {
+            // delete the current node
+            delete curr;
+            curr = nullptr;
+
+            // delete the non-leaf parent nodes
+            return true;
+        }
+
+        // if the current node is a leaf node and has children
+        else {
+            // mark the current node as a non-leaf node (DON'T DELETE IT)
+            curr->isLeaf = false;
+
+            // don't delete its parent nodes
+            return false;
+		}
+    }
+
+    return false;
+}
+
+bool Trie::preorder(Trie* node)
+{
+    if (node == NULL)
+        return false;
+
+	for (int i = 0; i < CHAR_SIZE; i++) {
+		if (node->character[i] != NULL) {
+
+			// if leaf node then print key
+			if (node->character[i]->isLeaf != false)
+				Dictionary->ListBox1->Items->Add((node->character[i]->word + ", " + node->character[i]->type + ": " + node->character[i]->def).c_str());
+
+			preorder(node->character[i]);
+		}
+	}
+	return true;
+}
+
+string Trie::update(string key, string choice){
+	// return false if Trie is empty
+	if (this == nullptr) {
+		return "nvm";
+	}
+
+	Trie* curr = this;
+	string word;
+	for (int i = 0; i < key.length(); i++)
+	{
+		// go to the next node
+		curr = curr->character[key[i]];
+		// if the string is invalid (reached end of a path in the Trie)
+		if (curr == nullptr) {
+			return "nvm";
+		}
+	}
+
+	// return true if the current node is a leaf and the
+	// end of the string is reached
+	if(choice == "1"){
+		if(curr->isLeaf){
+		return (curr->def);
+	}
+	}
+
+	if(curr->isLeaf){
+		curr->def = choice;
+	}
+	return "nvm";
+}
+
+ifstream coeff("C:\\Users\\ACER\\Documents\\Project\\dictionary - Sheet1.csv");
+Trie* head = new Trie();
+
+__fastcall TDictionary::TDictionary(TComponent* Owner)
+	: TForm(Owner)
+{
+	int i = 0;
+	string alpha1,CD,CL,CY,temp;
+
+
+	if(coeff.is_open()){
+		while(i < size){
+			getline(coeff, alpha1, ',');
+			getline(coeff, CL, ',');
+			getline(coeff, CD, '\n');
+			head->insert(rtrim(ltrim(alpha1)), rtrim(ltrim(CL)), rtrim(ltrim(CD)));
+
+			i = i+1;
+
+		}
+		coeff.close();
+		head->preorder(head);
+		Dictionary->Edit2->Text = "0.00 ms";
+	}
+
+	else{
+		Dictionary->ListBox1->Items->Add("Dictionary File not found.");
+	};
+
+}
+//---------------------------------------------------------------------------
+
+
+
+
+
+//
+void __fastcall TDictionary::SearchClick(TObject *Sender)
+{
+	String taskText= Edit1->Text;
+	AnsiString text = taskText;
+	bool res;
+	if(!taskText.IsEmpty()){
+		ListBox1->Items->Clear();
+		res = head->search(text.c_str());
+		if(res == False){
+			ShowMessage("Not Found \t\t\t");
+		}
+	}
+	else{
+		ListBox1->Items->Clear();
+		head->preorder(head);
+		}
+
+	Edit1->Text = "";
+	}
+//
+void __fastcall TForm2::InsertionClick(TObject *Sender)
+{
+	String wordText = Edit2->Text;
+	string word = ToNarrow(wordText.c_str());
+	String typeText = Edit1->Text;
+	string type = ToNarrow(typeText.c_str());
+	String defText = Edit3->Text;
+	string def = ToNarrow(defText.c_str());
+	size += 1;
+	head->insert(word,type, def);
+	Dictionary->ListBox1->Items->Add((wordText + ", " + typeText + " : " + defText).c_str());
+	Close();
+}
+//
+void __fastcall TForm3::UpdateShowClick(TObject *Sender)
+{
+	String wordText = Edit2->Text;
+	string word = ToNarrow(wordText.c_str());
+	string res = head->update(word, "1");
+	if(res == "nvm"){
+		ShowMessage("Not Found \t\t\t");
+	}else{
+		Edit1->Text = res.c_str();
+	}
+
+
+}
+//
+void __fastcall TForm3::UpdateYesClick(TObject *Sender){
+	String wordText = Edit2->Text;
+	string word = ToNarrow(wordText.c_str());
+	String defText = Edit3->Text;
+	string newdef = ToNarrow(defText.c_str());
+	string res = head->update(word, newdef);
+	Dictionary->ListBox1->Items->Clear();
+	head->preorder(head);
+	Close();
+}
+
+////---------------------------------------------------------------------------
+
+void __fastcall TDictionary::InsertClick(TObject *Sender)
+{
+	TForm2 *Form2;
+	Form2 = new TForm2(this);
+	Form2->ShowModal();
+}
+////---------------------------------------------------------------------------
+
+
+
+void __fastcall TDictionary::UpdateClick(TObject *Sender)
+{
+	TForm3 *Form3;
+	Form3 = new TForm3(this);
+	Form3->ShowModal();
+}
+////---------------------------------------------------------------------------
+
+void __fastcall TDictionary::ListBox1ItemClick(TCustomListBox * const Sender, TListBoxItem * const Item)
+{
+	TForm1 *Form1;
+	Form1 = new TForm1(this);
+	Form1->ShowModal();
+}
+
+void __fastcall TForm1::YesClick(TObject *Sender)
+{
+	int i = 0;
+	index = Dictionary->ListBox1->Selected->Index;
+	String one = Dictionary->ListBox1->Selected->Text;
+	string j = split(ToNarrow(one.c_str()), ',');
+	Dictionary->ListBox1->Items->Delete(index);
+	head->deletion(head, j);
+	size -= 1;
+	Close();
+}
+////---------------------------------------------------------------------------
+
+
+
+void __fastcall TDictionary::SortClick(TObject *Sender)
+{
+	int i = 0;
+	Dictionary->ListBox1->Clear();
+	auto sortstart = steady_clock::now();
+	head->preorder(head);
+	auto sortend = steady_clock::now();
+	double elapsed_time = double(duration_cast<nanoseconds> (sortend-sortstart).count());
+	elapsed_time /= 1000000;
+	string time = std::to_string(elapsed_time);
+	int h;
+	Dictionary->Edit2->Text = (time + " ms").c_str();
+}
+//---------------------------------------------------------------------------
+
