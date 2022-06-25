@@ -1,0 +1,2 @@
+The report contains the comparisons we made of the hash table and the trie.  
+The Documentation pdf contains the details about some of the functions in the code for both data structures.
