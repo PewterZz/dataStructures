@@ -14,6 +14,8 @@ To use the source code for this program you would need to run the program in C++
 C++ builder then you would need to download it from this website: https://www.embarcadero.com/products/cbuilder/start-for-free  
 Once on the website entire the details of your email and wait for a download to be started.  
 You should check your email for the serial number that you would need to enter into the start of the program for it to properly install.  
+Once C++ builder is installed, proceed to click on open project and find the folder where the code has been placed and find the .cbproj file and open that.  
+Enjoy.
 
 How to run the executable for the program:  
 Exe program for Hash Table : https://drive.google.com/drive/folders/1ZPryJuzmBMPSIs5EE3tf1J6vrCjBGVsf?usp=sharing  
