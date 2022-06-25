@@ -23,7 +23,7 @@ Exe program for Hash Table : https://drive.google.com/drive/folders/1ZPryJuzmBMP
 Exe program for Trie : https://drive.google.com/drive/folders/13gy_LSXfu7Z3WEn9DB0r1RiAusBjv3rj?usp=sharing  
 (You need to download the entire folder and run the exe file from there)  
 
-If any problems occur please contact me at (+6287780976170) : Peter Nelson Subrata,  
+If any problems occur please contact me at (+6287780976170) on whatsapp : Peter Nelson Subrata,  
 or my student email : peter.subrata@binus.ac.id
 
 
