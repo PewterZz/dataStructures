@@ -15,7 +15,7 @@ To use the source code for this program you would need to run the program in C++
 C++ builder then you would need to download it from this website: https://www.embarcadero.com/products/cbuilder/start-for-free  
 Once on the website entire the details of your email and wait for a download to be started.  
 You should check your email for the serial number that you would need to enter into the start of the program for it to properly install.  
-Once C++ builder is installed, proceed to click on open project and find the folder where the code has been placed and find the .cbproj file and open that.  
+Once C++ builder is installed, proceed to click on open project and find the folder where the code has been placed and find the .cbproj (note that in the folder for the hash table, there are two .cbproj files, one of the files is the wrong version of the project and should be not be opened, the file that should not be opened is the project1.cbproj file) file and open that.  
 Enjoy.
 
 How to run the executable for the program:  
