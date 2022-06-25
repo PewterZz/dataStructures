@@ -1,0 +1,7 @@
+How we used C++ builder:  
+C++ builder is the IDE we used to make the GUI for our program. Using C++ builder was not easy, but also not too hard. In C++ builder the first thing to do is  
+build the design of our GUI by using the fmx file that is provided. In the fmx file we can place and edit the properties of various C++ builder items. Specific actions  
+can be linked with code to perform a specific action we executed. To directly contact any of the items in the GUI we can call the Dictionary object and access the other  
+objects within that form afterwards. For example Dictionary->ListBox will lead us to the listbox of the program which is the box in the middle that we used to display  
+all of the dictionary items. Within the listbox object there is another object called items which has a function called Add(). This function can be used to add items into  
+the listbox. This is just one example of many of the other techniques that were used during the production of our program.
