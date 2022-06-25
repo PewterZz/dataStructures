@@ -5,7 +5,7 @@ Live video demo (with voice-over) : https://drive.google.com/file/d/1d2k989q-nun
 
   
 Group members:
-* Peter Nelson Subrata
+* Peter Nelson Subrata - 2502023562
 * Wilbert Wirawan Ichwan
 * William Jonathan Mulyadi
 * Philipus Adriel Tandra  
