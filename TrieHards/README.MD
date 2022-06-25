@@ -1,6 +1,6 @@
 # TrieHards
 ### Dictionary Program
-There are two versions of the program with their own respective data structures being a Trie and Hash table. 
+There are two versions of the program with their own respective data structures being a Trie and Hash table.  
 Live video demo (with voice-over) : https://drive.google.com/file/d/1d2k989q-nunB0hEb7mAQ1yAIfpAGdsmU/view
 
   
